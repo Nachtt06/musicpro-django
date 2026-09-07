@@ -128,3 +128,4 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
