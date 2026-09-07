@@ -62,7 +62,8 @@ def home_view(request):
 
 def catalogo_view(request):
     productos = cargar_json(PRODUCTOS_FILE)
-    return render(request, 'catalogo.html', {'productos': productos})
+    # Se cambió 'catalogo.html' por 'index.html' (o 'home.html' según las plantillas disponibles)
+    return render(request, 'index.html', {'productos': productos})
 
 def detalle_producto_view(request, producto_id):
     productos = cargar_json(PRODUCTOS_FILE)
