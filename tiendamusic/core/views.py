@@ -3,100 +3,146 @@ import os
 from django.shortcuts import render, redirect
 from django.conf import settings
 
-def cargar_json(nombre_archivo):
-    json_path = os.path.join(settings.BASE_DIR, 'core', 'data', nombre_archivo)
-    if os.path.exists(json_path):
-        with open(json_path, 'r', encoding='utf-8') as file:
-            return json.load(file)
+# Rutas de los archivos JSON de datos
+BASE_DIR = settings.BASE_DIR
+DATA_DIR = os.path.join(BASE_DIR, 'core', 'data')
+PRODUCTOS_FILE = os.path.join(DATA_DIR, 'productos.json')
+USUARIOS_FILE = os.path.join(DATA_DIR, 'usuarios.json')
+
+# Funciones aux para leer y escribir JSON
+def cargar_json(filepath):
+    if os.path.exists(filepath):
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return json.load(f)
     return []
 
-# Autenticación
+def guardar_json(filepath, data):
+    os.makedirs(DATA_DIR, exist_ok=True)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+# --- VISTAS DE AUTENTICACIÓN ---
+
 def login_view(request):
     error = None
     if request.method == 'POST':
-        usuario_input = request.POST.get('username')
-        password_input = request.POST.get('password')
-        usuarios = cargar_json('usuarios.json')
-        user_encontrado = next((u for u in usuarios if u['username'] == usuario_input and u['password'] == password_input), None)
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        usuarios = cargar_json(USUARIOS_FILE)
+        user_encontrado = next((u for u in usuarios if u['email'] == email and u['password'] == password), None)
         
         if user_encontrado:
-            request.session['usuario'] = user_encontrado
-            return redirect('admin_panel' if user_encontrado['rol'] == 'admin' else 'home')
+            request.session['usuario_id'] = user_encontrado['id']
+            request.session['usuario_nombre'] = user_encontrado['nombre']
+            request.session['rol'] = user_encontrado['rol']
+            
+            if user_encontrado['rol'] == 'admin':
+                return redirect('admin_panel')
+            return redirect('home')
         else:
-            error = "Usuario o contraseña incorrectos"
+            error = "Correo o contraseña incorrectos."
             
     return render(request, 'login.html', {'error': error})
+
+def registro_view(request):
+    error = None
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        
+        usuarios = cargar_json(USUARIOS_FILE)
+        
+        # Validar si el correo ya existe
+        if any(u['email'] == email for u in usuarios):
+            error = "El correo ya está registrado."
+        else:
+            nuevo_id = max([u['id'] for u in usuarios], default=0) + 1
+            nuevo_usuario = {
+                "id": nuevo_id,
+                "nombre": nombre,
+                "email": email,
+                "password": password,
+                "rol": "cliente"  # Por defecto todo registro es cliente
+            }
+            usuarios.append(nuevo_usuario)
+            guardar_json(USUARIOS_FILE, usuarios)
+            return redirect('login')
+            
+    return render(request, 'registro.html', {'error': error})
 
 def logout_view(request):
     request.session.flush()
     return redirect('login')
 
-# Vistas de Cliente
+# --- VISTAS DE CLIENTE ---
+
 def home_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-    productos = cargar_json('productos.json')
-    return render(request, 'home.html', {'productos': productos, 'usuario': usuario})
+    productos = cargar_json(PRODUCTOS_FILE)
+    destacados = productos[:3]
+    return render(request, 'home.html', {'productos': destacados})
 
 def catalogo_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-    productos = cargar_json('productos.json')
-    return render(request, 'index.html', {'productos': productos, 'usuario': usuario})
+    productos = cargar_json(PRODUCTOS_FILE)
+    return render(request, 'catalogo.html', {'productos': productos})
 
 def detalle_producto_view(request, producto_id):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-    productos = cargar_json('productos.json')
+    productos = cargar_json(PRODUCTOS_FILE)
     producto = next((p for p in productos if p['id'] == producto_id), None)
-    return render(request, 'detalle_producto.html', {'producto': producto, 'usuario': usuario})
+    return render(request, 'detalle_producto.html', {'producto': producto})
 
 def carrito_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-    productos = cargar_json('productos.json')[:2]
-    total = sum(p['precio'] for p in productos)
-    return render(request, 'carrito.html', {'productos': productos, 'total': total, 'usuario': usuario})
+    carrito = request.session.get('carrito', [])
+    return render(request, 'carrito.html', {'carrito': carrito})
 
 def checkout_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-    return render(request, 'checkout.html', {'usuario': usuario})
+    return render(request, 'checkout.html')
 
 def confirmacion_orden_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-    return render(request, 'confirmacion_orden.html', {'usuario': usuario})
+    request.session['carrito'] = []
+    return render(request, 'confirmacion_orden.html')
 
 def perfil_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
+    usuario_id = request.session.get('usuario_id')
+    usuarios = cargar_json(USUARIOS_FILE)
+    usuario = next((u for u in usuarios if u['id'] == usuario_id), None)
     return render(request, 'perfil.html', {'usuario': usuario})
 
 def historial_compras_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario:
-        return redirect('login')
-    return render(request, 'historial_compras.html', {'usuario': usuario})
+    return render(request, 'historial_compras.html')
 
-# Vistas de Administrador
+# --- VISTAS DE ADMINISTRADOR ---
+
 def admin_panel_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario or usuario['rol'] != 'admin':
-        return redirect('login')
-    productos = cargar_json('productos.json')
-    return render(request, 'admin_panel.html', {'productos': productos, 'usuario': usuario})
+    if request.session.get('rol') != 'admin':
+        return redirect('home')
+        
+    productos = cargar_json(PRODUCTOS_FILE)
+    
+    if request.method == 'POST':
+        # Agregar nuevo producto
+        nombre = request.POST.get('nombre')
+        precio = float(request.POST.get('precio', 0))
+        descripcion = request.POST.get('descripcion')
+        
+        nuevo_id = max([p['id'] for p in productos], default=0) + 1
+        nuevo_producto = {
+            "id": nuevo_id,
+            "nombre": nombre,
+            "precio": precio,
+            "descripcion": descripcion,
+            "imagen": "https://via.placeholder.com/300"
+        }
+        productos.append(nuevo_producto)
+        guardar_json(PRODUCTOS_FILE, productos)
+        return redirect('admin_panel')
+        
+    return render(request, 'admin_panel.html', {'productos': productos})
 
 def admin_usuarios_view(request):
-    usuario = request.session.get('usuario')
-    if not usuario or usuario['rol'] != 'admin':
-        return redirect('login')
-    usuarios = cargar_json('usuarios.json')
-    return render(request, 'admin_usuarios.html', {'usuarios': usuarios, 'usuario': usuario})
+    if request.session.get('rol') != 'admin':
+        return redirect('home')
+        
+    usuarios = cargar_json(USUARIOS_FILE)
+    return render(request, 'admin_usuarios.html', {'usuarios': usuarios})
