@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Catálogo - MusicPro{% endblock %}
+{% block content %}
+<div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800">Catálogo de Productos</h1>
+    <p class="text-gray-600">Encuentra los mejores instrumentos musicales</p>
+</div>
+
+<div class="flex flex-wrap gap-4 mb-8">
+    <button class="filter-btn active bg-purple-600 text-white px-6 py-2 rounded-full font-medium hover:bg-purple-700 transition" data-filter="all">
+        Todos
+    </button>
+    <button class="filter-btn bg-white text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-purple-100 transition border" data-filter="Guitarras">
+        <i class="fas fa-guitar mr-2"></i>Guitarras
+    </button>
+    <button class="filter-btn bg-white text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-purple-100 transition border" data-filter="Percusión">
+        <i class="fas fa-drum mr-2"></i>Percusión
+    </button>
+    <button class="filter-btn bg-white text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-purple-100 transition border" data-filter="Teclados">
+        <i class="fas fa-keyboard mr-2"></i>Teclados
+    </button>
+    <button class="filter-btn bg-white text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-purple-100 transition border" data-filter="Bajos">
+        <i class="fas fa-guitar mr-2"></i>Bajos
+    </button>
+    <button class="filter-btn bg-white text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-purple-100 transition border" data-filter="Audio Profesional">
+        <i class="fas fa-microphone mr-2"></i>Audio
+    </button>
+    <button class="filter-btn bg-white text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-purple-100 transition border" data-filter="Amplificadores">
+        <i class="fas fa-volume-up mr-2"></i>Amplificadores
+    </button>
+</div>
+
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    {% for producto in productos %}
+    <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover product-card" data-categoria="{{ producto.categoria }}">
+        <div class="relative">
+            <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}" class="w-full h-56 object-cover">
+            {% if producto.stock > 0 %}
+            <span class="absolute top-4 right-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full">Disponible</span>
+            {% else %}
+            <span class="absolute top-4 right-4 bg-red-500 text-white text-xs px-3 py-1 rounded-full">Agotado</span>
+            {% endif %}
+        </div>
+        <div class="p-6">
+            <span class="text-sm text-purple-600 font-medium">{{ producto.categoria }}</span>
+            <h3 class="text-lg font-bold text-gray-800 mt-1 mb-2">{{ producto.nombre }}</h3>
+            <p class="text-2xl font-bold text-purple-600 mb-4">${{ producto.precio|floatformat:0 }}</p>
+            <div class="flex gap-2">
+                <a href="{% url 'detalle_producto' producto.id %}" class="flex-1 bg-gray-100 text-gray-700 py-2 px-4 rounded-lg text-center hover:bg-gray-200 transition font-medium">
+                    <i class="fas fa-eye mr-1"></i> Ver
+                </a>
+                {% if producto.stock > 0 %}
+                <button onclick="agregarAlCarrito({{ producto.id }}, '{{ producto.nombre }}', {{ producto.precio }}, '{{ producto.imagen }}')" class="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition font-medium">
+                    <i class="fas fa-cart-plus mr-1"></i> Agregar
+                </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full text-center py-12">
+        <i class="fas fa-box-open text-6xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500 text-lg">No hay productos disponibles</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('bg-purple-600', 'text-white');
+            b.classList.add('bg-white', 'text-gray-700');
+        });
+        this.classList.remove('bg-white', 'text-gray-700');
+        this.classList.add('bg-purple-600', 'text-white');
+        
+        const filter = this.dataset.filter;
+        document.querySelectorAll('.product-card').forEach(card => {
+            if (filter === 'all' || card.dataset.categoria === filter) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
+
+function agregarAlCarrito(id, nombre, precio, imagen) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const existente = carrito.find(item => item.id === id);
+    if (existente) {
+        existente.cantidad++;
+    } else {
+        carrito.push({ id, nombre, precio, imagen, cantidad: 1 });
+    }
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarContadorCarrito();
+    alert('¡Producto agregado al carrito!');
+}
+
+function actualizarContadorCarrito() {
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+    document.getElementById('cart-count').textContent = total;
+}
+
+document.addEventListener('DOMContentLoaded', actualizarContadorCarrito);
+</script>
+{% endblock %}

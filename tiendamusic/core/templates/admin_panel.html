@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% block title %}Gestión de Productos - Admin MusicPro{% endblock %}
+{% block content %}
+<div class="flex flex-col lg:flex-row gap-8">
+    <aside class="lg:w-64 flex-shrink-0">
+        <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b">
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user-shield text-white"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-gray-800">{{ usuario.nombre }}</p>
+                    <p class="text-sm text-purple-600">Administrador</p>
+                </div>
+            </div>
+            <nav class="space-y-2">
+                <a href="{% url 'admin_productos' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-purple-100 text-purple-700 font-medium">
+                    <i class="fas fa-box"></i> Productos
+                </a>
+                <a href="{% url 'admin_usuarios' %}" class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-100 transition">
+                    <i class="fas fa-users"></i> Usuarios
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+    <div class="flex-1">
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+            <h1 class="text-3xl font-bold text-gray-800"><i class="fas fa-box mr-3"></i>Gestión de Productos</h1>
+            <button onclick="abrirModalCrear()" class="bg-purple-600 text-white py-3 px-6 rounded-lg hover:bg-purple-700 transition font-medium">
+                <i class="fas fa-plus mr-2"></i>Nuevo Producto
+            </button>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="p-4 border-b">
+                <input type="text" id="buscar-producto" placeholder="Buscar producto..." class="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Imagen</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Nombre</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Categoría</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Precio</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">Stock</th>
+                            <th class="px-6 py-4 text-center text-sm font-semibold text-gray-600">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-productos" class="divide-y">
+                        {% for producto in productos %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4">
+                                <img src="{{ producto.imagen }}" alt="{{ producto.nombre }}" class="w-16 h-16 object-cover rounded-lg">
+                            </td>
+                            <td class="px-6 py-4 font-medium text-gray-800">{{ producto.nombre }}</td>
+                            <td class="px-6 py-4"><span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm">{{ producto.categoria }}</span></td>
+                            <td class="px-6 py-4 font-bold text-purple-600">${{ producto.precio|floatformat:0 }}</td>
+                            <td class="px-6 py-4">
+                                {% if producto.stock > 0 %}
+                                <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">{{ producto.stock }}</span>
+                                {% else %}
+                                <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">Agotado</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="editarProducto({{ producto.id }}, '{{ producto.nombre }}', '{{ producto.categoria }}', {{ producto.precio }}, {{ producto.stock }}, '{{ producto.imagen }}')" class="text-blue-600 hover:text-blue-800 p-2">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="eliminarProducto({{ producto.id }}, '{{ producto.nombre }}')" class="text-red-600 hover:text-red-800 p-2">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modal-producto" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+        <div class="p-6 border-b flex justify-between items-center">
+            <h2 id="modal-titulo" class="text-xl font-bold text-gray-800">Nuevo Producto</h2>
+            <button onclick="cerrarModal()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <form id="producto-form" class="p-6 space-y-4">
+            <input type="hidden" id="producto-id">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+                <input type="text" id="producto-nombre" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+                <select id="producto-categoria" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                    <option value="Guitarras">Guitarras</option>
+                    <option value="Percusión">Percusión</option>
+                    <option value="Teclados">Teclados</option>
+                    <option value="Bajos">Bajos</option>
+                    <option value="Audio Profesional">Audio Profesional</option>
+                    <option value="Amplificadores">Amplificadores</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Precio ($)</label>
+                    <input type="number" id="producto-precio" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
+                    <input type="number" id="producto-stock" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">URL de Imagen</label>
+                <input type="url" id="producto-imagen" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+            </div>
+            <div class="flex gap-4 pt-4">
+                <button type="button" onclick="cerrarModal()" class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg hover:bg-gray-200 transition font-medium">Cancelar</button>
+                <button type="submit" class="flex-1 bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition font-medium">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function abrirModalCrear() {
+    document.getElementById('modal-titulo').textContent = 'Nuevo Producto';
+    document.getElementById('producto-form').reset();
+    document.getElementById('producto-id').value = '';
+    document.getElementById('modal-producto').classList.remove('hidden');
+    document.getElementById('modal-producto').classList.add('flex');
+}
+
+function editarProducto(id, nombre, categoria, precio, stock, imagen) {
+    document.getElementById('modal-titulo').textContent = 'Editar Producto';
+    document.getElementById('producto-id').value = id;
+    document.getElementById('producto-nombre').value = nombre;
+    document.getElementById('producto-categoria').value = categoria;
+    document.getElementById('producto-precio').value = precio;
+    document.getElementById('producto-stock').value = stock;
+    document.getElementById('producto-imagen').value = imagen;
+    document.getElementById('modal-producto').classList.remove('hidden');
+    document.getElementById('modal-producto').classList.add('flex');
+}
+
+function cerrarModal() {
+    document.getElementById('modal-producto').classList.add('hidden');
+    document.getElementById('modal-producto').classList.remove('flex');
+}
+
+function eliminarProducto(id, nombre) {
+    if (confirm(`¿Estás seguro de eliminar "${nombre}"?`)) {
+        alert('Producto eliminado (simulado)');
+    }
+}
+
+document.getElementById('buscar-producto').addEventListener('input', function(e) {
+    const busqueda = e.target.value.toLowerCase();
+    document.querySelectorAll('#tabla-productos tr').forEach(row => {
+        const texto = row.textContent.toLowerCase();
+        row.style.display = texto.includes(busqueda) ? '' : 'none';
+    });
+});
+
+document.getElementById('producto-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    alert('Producto guardado (simulado)');
+    cerrarModal();
+});
+</script>
+{% endblock %}

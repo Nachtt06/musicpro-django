@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MusicPro - Tienda de Instrumentos Musicales{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    {% block navbar %}
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex justify-between items-center h-16">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2">
+                    <i class="fas fa-music text-2xl text-purple-600"></i>
+                    <span class="text-xl font-bold text-gray-800">MusicPro</span>
+                </a>
+                <div class="flex items-center space-x-4">
+                    {% if usuario %}
+                        {% if usuario.rol == 'admin' %}
+                            <a href="{% url 'admin_productos' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-box"></i> Productos</a>
+                            <a href="{% url 'admin_usuarios' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-users"></i> Usuarios</a>
+                        {% else %}
+                            <a href="{% url 'catalogo' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-store"></i> Catálogo</a>
+                            <a href="{% url 'carrito' %}" class="text-gray-600 hover:text-purple-600 relative">
+                                <i class="fas fa-shopping-cart"></i>
+                                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                            </a>
+                            <a href="{% url 'perfil' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-user"></i> Perfil</a>
+                        {% endif %}
+                        <span class="text-sm text-gray-500">{{ usuario.nombre }}</span>
+                        <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                    {% else %}
+                        <a href="{% url 'home' %}" class="text-gray-600 hover:text-purple-600">Inicio</a>
+                        <a href="{% url 'login' %}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p>&copy; 2026 MusicPro. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
