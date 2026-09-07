@@ -25,22 +25,20 @@
                     <span class="text-xl font-bold text-gray-800">MusicPro</span>
                 </a>
                 <div class="flex items-center space-x-4">
-                    {% if usuario %}
-                        {% if usuario.rol == 'admin' %}
-                            <a href="{% url 'admin_productos' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-box"></i> Productos</a>
-                            <a href="{% url 'admin_usuarios' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-users"></i> Usuarios</a>
+                    {% if request.session.usuario_id %}
+                        {% if request.session.rol == 'admin' %}
+                            <a href="{% url 'admin_panel' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-tachometer-alt"></i> Panel Admin</a>
                         {% else %}
+                            <a href="{% url 'home' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-home"></i> Inicio</a>
                             <a href="{% url 'catalogo' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-store"></i> Catálogo</a>
                             <a href="{% url 'carrito' %}" class="text-gray-600 hover:text-purple-600 relative">
                                 <i class="fas fa-shopping-cart"></i>
                                 <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
                             </a>
-                            <a href="{% url 'perfil' %}" class="text-gray-600 hover:text-purple-600"><i class="fas fa-user"></i> Perfil</a>
                         {% endif %}
-                        <span class="text-sm text-gray-500">{{ usuario.nombre }}</span>
-                        <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                        <span class="text-sm text-gray-500">{{ request.session.usuario_nombre }}</span>
+                        <a href="{% url 'logout' %}" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
                     {% else %}
-                        <a href="{% url 'home' %}" class="text-gray-600 hover:text-purple-600">Inicio</a>
                         <a href="{% url 'login' %}" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</a>
                     {% endif %}
                 </div>

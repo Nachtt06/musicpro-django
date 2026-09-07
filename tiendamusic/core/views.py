@@ -9,7 +9,7 @@ DATA_DIR = os.path.join(BASE_DIR, 'core', 'data')
 PRODUCTOS_FILE = os.path.join(DATA_DIR, 'productos.json')
 USUARIOS_FILE = os.path.join(DATA_DIR, 'usuarios.json')
 
-# Funciones aux para leer y escribir JSON
+# Funciones auxiliares para leer y escribir JSON
 def cargar_json(filepath):
     if os.path.exists(filepath):
         with open(filepath, 'r', encoding='utf-8') as f:
@@ -26,15 +26,19 @@ def guardar_json(filepath, data):
 def login_view(request):
     error = None
     if request.method == 'POST':
-        email = request.POST.get('email')
+        username_input = request.POST.get('usuario') or request.POST.get('email') or request.POST.get('username')
         password = request.POST.get('password')
         
         usuarios = cargar_json(USUARIOS_FILE)
-        user_encontrado = next((u for u in usuarios if u['email'] == email and u['password'] == password), None)
+        
+        user_encontrado = next(
+            (u for u in usuarios if (u.get('usuario') == username_input or u.get('email') == username_input) and u.get('password') == password),
+            None
+        )
         
         if user_encontrado:
             request.session['usuario_id'] = user_encontrado['id']
-            request.session['usuario_nombre'] = user_encontrado['nombre']
+            request.session['usuario_nombre'] = user_encontrado.get('nombre', user_encontrado.get('usuario'))
             request.session['rol'] = user_encontrado['rol']
             
             if user_encontrado['rol'] == 'admin':
@@ -44,33 +48,6 @@ def login_view(request):
             error = "Correo o contraseña incorrectos."
             
     return render(request, 'login.html', {'error': error})
-
-def registro_view(request):
-    error = None
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        usuarios = cargar_json(USUARIOS_FILE)
-        
-        # Validar si el correo ya existe
-        if any(u['email'] == email for u in usuarios):
-            error = "El correo ya está registrado."
-        else:
-            nuevo_id = max([u['id'] for u in usuarios], default=0) + 1
-            nuevo_usuario = {
-                "id": nuevo_id,
-                "nombre": nombre,
-                "email": email,
-                "password": password,
-                "rol": "cliente"  # Por defecto todo registro es cliente
-            }
-            usuarios.append(nuevo_usuario)
-            guardar_json(USUARIOS_FILE, usuarios)
-            return redirect('login')
-            
-    return render(request, 'registro.html', {'error': error})
 
 def logout_view(request):
     request.session.flush()
@@ -121,7 +98,6 @@ def admin_panel_view(request):
     productos = cargar_json(PRODUCTOS_FILE)
     
     if request.method == 'POST':
-        # Agregar nuevo producto
         nombre = request.POST.get('nombre')
         precio = float(request.POST.get('precio', 0))
         descripcion = request.POST.get('descripcion')

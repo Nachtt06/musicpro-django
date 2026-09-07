@@ -1,26 +1,42 @@
 [
-  {
-    "id": 1,
-    "username": "admin",
-    "password": "123",
-    "nombre": "Administrador Principal",
-    "email": "admin@musicpro.cl",
-    "rol": "admin"
-  },
-  {
-    "id": 2,
-    "username": "cliente1",
-    "password": "123",
-    "nombre": "Juan Pérez",
-    "email": "juan.perez@gmail.com",
-    "rol": "cliente"
-  },
-  {
-    "id": 3,
-    "username": "cliente2",
-    "password": "123",
-    "nombre": "María González",
-    "email": "maria.gonzalez@gmail.com",
-    "rol": "cliente"
-  }
+    {
+        "id": 1,
+        "usuario": "admin",
+        "nombre": "Administrador General",
+        "email": "admin@musicpro.cl",
+        "password": "123",
+        "rol": "admin"
+    },
+    {
+        "id": 2,
+        "usuario": "cliente1",
+        "nombre": "Juan Pérez",
+        "email": "cliente1@musicpro.cl",
+        "password": "123",
+        "rol": "cliente"
+    },
+    {
+        "id": 3,
+        "usuario": "maria_g",
+        "nombre": "María Gómez",
+        "email": "maria@musicpro.cl",
+        "password": "123",
+        "rol": "cliente"
+    },
+    {
+        "id": 4,
+        "usuario": "carlos_m",
+        "nombre": "Carlos Mendoza",
+        "email": "carlos@musicpro.cl",
+        "password": "123",
+        "rol": "cliente"
+    },
+    {
+        "id": 5,
+        "usuario": "admin_soporte",
+        "nombre": "Soporte Técnico",
+        "email": "soporte@musicpro.cl",
+        "password": "123",
+        "rol": "admin"
+    }
 ]
