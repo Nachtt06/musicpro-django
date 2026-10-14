@@ -36,12 +36,13 @@ class ProductoAdmin(admin.ModelAdmin):
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
     list_display = ('id', 'rut', 'nombre', 'email', 'direccion')
-    search_fields = ('rut', 'nombre')
+    search_fields = ('rut', 'nombre', 'email')
+    list_per_page = 15
 
 @admin.register(Venta)
 class VentaAdmin(admin.ModelAdmin):
     list_display = ('id', 'fecha', 'cliente', 'usuario', 'total')
-    list_filter = ('fecha', 'usuario')
+    list_filter = ('fecha',)
 
 @admin.register(DetalleVenta)
 class DetalleVentaAdmin(admin.ModelAdmin):
