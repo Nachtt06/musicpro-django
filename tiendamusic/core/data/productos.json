@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "nombre": "Guitarra Eléctrica Fender Stratocaster",
+    "precio": 890000,
+    "categoria": "Guitarras",
+    "imagen": "https://images.unsplash.com/photo-1550291652-6ea9114a47b1?w=500",
+    "stock": 8
+  },
+  {
+    "id": 2,
+    "nombre": "Batería Acústica Pearl Export",
+    "precio": 1200000,
+    "categoria": "Percusión",
+    "imagen": "https://images.unsplash.com/photo-1519892300165-cb5542fb47c7?w=500",
+    "stock": 3
+  },
+  {
+    "id": 3,
+    "nombre": "Teclado Sintetizador Roland XPS-30",
+    "precio": 750000,
+    "categoria": "Teclados",
+    "imagen": "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=500",
+    "stock": 5
+  },
+  {
+    "id": 4,
+    "nombre": "Bajo Eléctrico Ibanez SR300E",
+    "precio": 420000,
+    "categoria": "Bajos",
+    "imagen": "https://images.unsplash.com/photo-1564186763535-ebb21ef5277f?w=500",
+    "stock": 6
+  },
+  {
+    "id": 5,
+    "nombre": "Micrófono Condensador Shure SM7B",
+    "precio": 490000,
+    "categoria": "Audio Profesional",
+    "imagen": "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=500",
+    "stock": 12
+  },
+  {
+    "id": 6,
+    "nombre": "Amplificador Marshall Mustang GT",
+    "precio": 310000,
+    "categoria": "Amplificadores",
+    "imagen": "https://images.unsplash.com/photo-1558098329-a11cff621064?w=500",
+    "stock": 4
+  }
+]
