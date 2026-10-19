@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}MusicPro - Tu Tienda de Instrumentos Musicales{% endblock %}
+{% block content %}
+<section class="relative bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-3xl p-12 mb-12 overflow-hidden">
+    <div class="absolute inset-0 opacity-20">
+        <div class="absolute inset-0 bg-repeat bg-center" style="background-image: url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%23ffffff\" fill-opacity=\"0.4\"%3E%3Cpath d=\"M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </div>
+    <div class="relative z-10 max-w-2xl">
+        <h1 class="text-5xl font-extrabold mb-4">Encuentra tu instrumento ideal</h1>
+        <p class="text-xl text-purple-100 mb-8">Descubre nuestra amplia colección de instrumentos musicales de primera calidad.</p>
+        <a href="{% url 'login' %}" class="inline-block bg-white text-purple-600 font-bold py-3 px-8 rounded-full hover:bg-purple-100 transition transform hover:scale-105">
+            <i class="fas fa-shopping-bag mr-2"></i>Comprar Ahora
+        </a>
+    </div>
+</section>
+
+<section class="mb-12">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Categorías Populares</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-2xl p-6 text-center card-hover cursor-pointer shadow-md">
+            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-guitar text-3xl text-purple-600"></i>
+            </div>
+            <h3 class="font-semibold text-gray-800">Guitarras</h3>
+            <p class="text-sm text-gray-500">45 productos</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 text-center card-hover cursor-pointer shadow-md">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-drum text-3xl text-blue-600"></i>
+            </div>
+            <h3 class="font-semibold text-gray-800">Percusión</h3>
+            <p class="text-sm text-gray-500">32 productos</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 text-center card-hover cursor-pointer shadow-md">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-piano-keyboard text-3xl text-green-600"></i>
+            </div>
+            <h3 class="font-semibold text-gray-800">Teclados</h3>
+            <p class="text-sm text-gray-500">28 productos</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 text-center card-hover cursor-pointer shadow-md">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-microphone text-3xl text-red-600"></i>
+            </div>
+            <h3 class="font-semibold text-gray-800">Audio</h3>
+            <p class="text-sm text-gray-500">56 productos</p>
+        </div>
+    </div>
+</section>
+
+<section class="mb-12">
+    <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">¿Por qué elegirnos?</h2>
+    <div class="grid md:grid-cols-3 gap-8">
+        <div class="bg-white rounded-2xl p-8 text-center card-hover shadow-md">
+            <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-truck text-3xl text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Envío Gratis</h3>
+            <p class="text-gray-600">Envío gratuito en compras sobre $100.000</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 text-center card-hover shadow-md">
+            <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-shield-alt text-3xl text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Garantía</h3>
+            <p class="text-gray-600">2 años de garantía en todos nuestros productos</p>
+        </div>
+        <div class="bg-white rounded-2xl p-8 text-center card-hover shadow-md">
+            <div class="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-headset text-3xl text-white"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-3">Soporte 24/7</h3>
+            <p class="text-gray-600">Atención al cliente las 24 horas del día</p>
+        </div>
+    </div>
+</section>
+
+<section class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl p-12 text-white text-center">
+    <h2 class="text-3xl font-bold mb-4">¿Listo para hacer música?</h2>
+    <p class="text-xl text-purple-100 mb-8">Únete a miles de músicos satisfechos</p>
+    <a href="{% url 'login' %}" class="inline-block bg-white text-purple-600 font-bold py-3 px-8 rounded-full hover:bg-purple-100 transition">
+        <i class="fas fa-user-plus mr-2"></i>Crear Cuenta Gratis
+    </a>
+</section>
+{% endblock %}
