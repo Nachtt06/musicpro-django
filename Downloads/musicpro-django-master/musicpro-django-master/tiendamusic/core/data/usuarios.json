@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "usuario": "admin",
+        "nombre": "Administrador General",
+        "email": "admin@musicpro.cl",
+        "password": "123",
+        "rol": "admin"
+    },
+    {
+        "id": 2,
+        "usuario": "cliente1",
+        "nombre": "Juan Pérez",
+        "email": "cliente1@musicpro.cl",
+        "password": "123",
+        "rol": "cliente"
+    },
+    {
+        "id": 3,
+        "usuario": "maria_g",
+        "nombre": "María Gómez",
+        "email": "maria@musicpro.cl",
+        "password": "123",
+        "rol": "cliente"
+    },
+    {
+        "id": 4,
+        "usuario": "carlos_m",
+        "nombre": "Carlos Mendoza",
+        "email": "carlos@musicpro.cl",
+        "password": "123",
+        "rol": "cliente"
+    },
+    {
+        "id": 5,
+        "usuario": "admin_soporte",
+        "nombre": "Soporte Técnico",
+        "email": "soporte@musicpro.cl",
+        "password": "123",
+        "rol": "admin"
+    }
+]
